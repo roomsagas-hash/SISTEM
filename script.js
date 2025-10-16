@@ -217,3 +217,4 @@ document.getElementById("logoffBtn").addEventListener("click", logoff);
 // ---------- INICIALIZAÇÃO ----------
 if(loggedUser && users.some(u=>u.username===loggedUser)) showMain(); else showLogin();
 
+
