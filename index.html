@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AGAS Room Organizer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <h1>AGAS</h1>
+      <span>ROOM ORGANIZER</span>
+    </div>
+    <div class="status-bar" id="statusBar"></div>
+    <button class="logoff-btn" id="logoffBtn">Logoff</button>
+
+    <!-- LOGIN -->
+    <div id="loginSection">
+      <h2>Login</h2>
+      <div class="form-group">
+        <input type="text" id="loginUsername" placeholder="Usuário">
+        <input type="password" id="loginPassword" placeholder="Senha">
+      </div>
+      <button class="book-btn" onclick="login()">Entrar</button>
+      <div class="login-links">
+        <a onclick="showRegister()">Criar Conta</a>
+        <a onclick="showRecovery()">Recuperar Senha</a>
+      </div>
+    </div>
+
+    <!-- REGISTRO -->
+    <div id="registerSection" style="display:none;">
+      <h2>Criar Conta</h2>
+      <div class="form-group">
+        <input type="text" id="regUsername" placeholder="Usuário">
+        <input type="password" id="regPassword" placeholder="Senha">
+      </div>
+      <div class="form-group">
+        <input type="text" id="regQuestion" placeholder="Pergunta de segurança">
+        <input type="text" id="regAnswer" placeholder="Resposta de segurança">
+      </div>
+      <button class="book-btn" onclick="register()">Registrar</button>
+      <button class="book-btn" style="background:#999;" onclick="showLogin()">Voltar</button>
+    </div>
+
+    <!-- RECUPERAR SENHA -->
+    <div id="recoverySection" style="display:none;">
+      <h2>Recuperar Senha</h2>
+      <input type="text" id="recUsername" placeholder="Usuário"><br><br>
+      <button class="book-btn" onclick="askQuestion()">Próximo</button>
+      <button class="book-btn" style="background:#999;" onclick="showLogin()">Voltar</button>
+      <div id="securityQuestion" style="margin-top:15px;display:none;"></div>
+    </div>
+
+    <!-- SISTEMA -->
+    <div id="mainSection" style="display:none;">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('horarios')">Horários</button>
+        <button class="tab" id="usuariosTabBtn" style="display:none;" onclick="switchTab('usuarios')">Usuários</button>
+      </div>
+
+      <!-- HORARIOS -->
+      <div id="tabHorarios">
+        <h2>Reservar</h2>
+        <div class="form-group">
+          <input type="text" id="titulo" placeholder="Título da reunião">
+          <input type="date" id="data">
+          <select id="horaInicio"></select>
+          <select id="horaFim"></select>
+        </div>
+        <button class="book-btn" id="bookBtn">Agendar Reunião</button>
+        <div class="meeting-list">
+          <h3>Reuniões Agendadas</h3>
+          <table id="meetingTable">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Organizador</th>
+                <th>Data</th>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- USUARIOS (só ADM) -->
+      <div id="tabUsuarios" style="display:none;">
+        <h2>Gerenciar Usuários</h2>
+        <div class="users-list">
+          <table id="usersTable">
+            <thead>
+              <tr>
+                <th>Usuário</th>
+                <th>Tipo</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
