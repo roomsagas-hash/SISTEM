@@ -50,7 +50,7 @@ function renderTable() {
         <button class="action-btn delete-btn" onclick="excluir(${index})">Excluir</button>
       `;
     } else {
-      actionBtns = <span class="view-only">Visualização</span>;
+      actionBtns = '<span class="view-only">Visualização</span>';
     }
     row.innerHTML = `
       <td>${r.titulo}</td>
@@ -152,7 +152,7 @@ function showMain() {
   document.getElementById("mainSection").style.display = "block";
   document.getElementById("logoffBtn").style.display = "inline-block";
   const userObj = users.find(u => u.username === loggedUser);
-  document.getElementById("statusBar").innerText = Usuário: ${loggedUser} ${userObj?.isAdmin ? "(ADM)" : ""};
+  document.getElementById("statusBar").innerText = `Usuário: ${loggedUser} ${userObj?.isAdmin ? "(ADM)" : ""}`;
   if (userObj?.isAdmin) document.getElementById("usuariosTabBtn").style.display = "inline-block";
   else document.getElementById("usuariosTabBtn").style.display = "none";
   renderTable(); renderUsersTable();
@@ -166,8 +166,16 @@ function showLogin() {
   document.getElementById("logoffBtn").style.display = "none";
 }
 
-function showRegister() { document.getElementById("loginSection").style.display="none"; document.getElementById("registerSection").style.display="block"; }
-function showRecovery() { document.getElementById("loginSection").style.display="none"; document.getElementById("recoverySection").style.display="block"; document.getElementById("securityQuestion").style.display="none"; }
+function showRegister() { 
+  document.getElementById("loginSection").style.display="none"; 
+  document.getElementById("registerSection").style.display="block"; 
+}
+
+function showRecovery() { 
+  document.getElementById("loginSection").style.display="none"; 
+  document.getElementById("recoverySection").style.display="block"; 
+  document.getElementById("securityQuestion").style.display="none"; 
+}
 
 // ---------- ABAS ----------
 function switchTab(tab) {
@@ -200,19 +208,45 @@ function renderUsersTable() {
             <button class="action-btn reset-btn" onclick="forceReset('${u.username}')">Redefinir Senha</button>
             <button class="action-btn promote-btn" onclick="toggleAdmin('${u.username}')">${u.isAdmin?"Rebaixar":"Promover"} ADM</button>
             <button class="action-btn edit-btn" onclick="editUserName('${u.username}')">Ajustar</button>
-          :<span class="view-only">Protegido</span>`}
+          `:'<span class="view-only">Protegido</span>'}
         </td>
       </tr>
     `;
   });
 }
 
-window.deleteUser=function(username){ if(!confirm("Excluir usuário "+username+"?")) return; users=users.filter(u=>u.username!==username); reservas=reservas.filter(r=>r.organizador!==username); saveData(); renderUsersTable(); renderTable(); }
-window.forceReset=function(username){ const newPass=prompt("Digite a nova senha para "+username+":"); if(!newPass) return; const user=users.find(u=>u.username===username); if(user){ user.password=newPass; saveData(); alert("Senha redefinida!"); } }
-window.toggleAdmin=function(username){ const user=users.find(u=>u.username===username); if(user){ user.isAdmin=!user.isAdmin; saveData(); renderUsersTable(); } }
-window.editUserName=function(username){ const newName=prompt("Digite o novo nome de usuário:",username); if(!newName) return; if(users.some(u=>u.username.toLowerCase()===newName.toLowerCase())){ alert("Esse nome já está em uso!"); return; } const user=users.find(u=>u.username===username); if(user){ reservas.forEach(r=>{ if(r.organizador===user.username) r.organizador=newName; }); user.username=newName; saveData(); renderUsersTable(); renderTable(); alert("Nome de usuário atualizado com sucesso!"); } }
+window.deleteUser=function(username){ 
+  if(!confirm("Excluir usuário "+username+"?")) return; 
+  users=users.filter(u=>u.username!==username); 
+  reservas=reservas.filter(r=>r.organizador!==username); 
+  saveData(); renderUsersTable(); renderTable(); 
+}
+window.forceReset=function(username){ 
+  const newPass=prompt("Digite a nova senha para "+username+":"); 
+  if(!newPass) return; 
+  const user=users.find(u=>u.username===username); 
+  if(user){ user.password=newPass; saveData(); alert("Senha redefinida!"); } 
+}
+window.toggleAdmin=function(username){ 
+  const user=users.find(u=>u.username===username); 
+  if(user){ user.isAdmin=!user.isAdmin; saveData(); renderUsersTable(); } 
+}
+window.editUserName=function(username){ 
+  const newName=prompt("Digite o novo nome de usuário:",username); 
+  if(!newName) return; 
+  if(users.some(u=>u.username.toLowerCase()===newName.toLowerCase())){ alert("Esse nome já está em uso!"); return; } 
+  const user=users.find(u=>u.username===username); 
+  if(user){ 
+    reservas.forEach(r=>{ if(r.organizador===user.username) r.organizador=newName; }); 
+    user.username=newName; 
+    saveData(); renderUsersTable(); renderTable(); 
+    alert("Nome de usuário atualizado com sucesso!"); 
+  } 
+}
 
 document.getElementById("logoffBtn").addEventListener("click", logoff);
 
 // ---------- INICIALIZAÇÃO ----------
-if(loggedUser && users.some(u=>u.username===loggedUser)) showMain(); else showLogin();
+if(loggedUser && users.some(u=>u.username===loggedUser)) showMain(); 
+else showLogin();
+
