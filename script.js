@@ -1,3 +1,10 @@
+// ---------- LIMPAR USUÁRIOS ANTIGOS E LOGGEDUSER ----------
+if (!localStorage.getItem("resetDone")) {
+  localStorage.removeItem("users");       // Remove usuários antigos
+  localStorage.removeItem("loggedUser");  // Remove login antigo
+  localStorage.setItem("resetDone", "true"); // Marca que já fez o reset
+}
+
 // ---------- DADOS ----------
 let reservas = JSON.parse(localStorage.getItem("reservas")) || [];
 let users = JSON.parse(localStorage.getItem("users")) || [];
@@ -209,3 +216,4 @@ document.getElementById("logoffBtn").addEventListener("click", logoff);
 
 // ---------- INICIALIZAÇÃO ----------
 if(loggedUser && users.some(u=>u.username===loggedUser)) showMain(); else showLogin();
+
