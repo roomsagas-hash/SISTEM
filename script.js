@@ -3,11 +3,13 @@ let reservas = JSON.parse(localStorage.getItem("reservas")) || [];
 let users = JSON.parse(localStorage.getItem("users")) || [];
 let loggedUser = localStorage.getItem("loggedUser") || null;
 
+// Cria admin padrão caso não exista
 if (!users.some(u => u.username === "adm")) {
   users.push({ username: "adm", password: "1234", question: "Padrão", answer: "1234", isAdmin: true });
-  saveData();
+  localStorage.setItem("users", JSON.stringify(users));
 }
 
+// ---------- HORÁRIOS ----------
 const horarios = [];
 for (let h = 7; h <= 18; h++) {
   horarios.push((h < 10 ? "0"+h : h)+":00");
@@ -55,7 +57,7 @@ function renderTable() {
   });
 }
 
-// Eventos de agendamento
+// ---------- RESERVAS ----------
 document.getElementById("bookBtn").addEventListener("click", () => {
   const titulo = document.getElementById("titulo").value;
   const data = document.getElementById("data").value;
@@ -81,7 +83,7 @@ window.editar = i => {
   saveData(); renderTable();
 };
 
-// Login e registro
+// ---------- LOGIN ----------
 function login() {
   const username = document.getElementById("loginUsername").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
@@ -96,6 +98,7 @@ function login() {
 document.getElementById("loginUsername").addEventListener("keyup", e => { if(e.key==="Enter") login(); });
 document.getElementById("loginPassword").addEventListener("keyup", e => { if(e.key==="Enter") login(); });
 
+// ---------- REGISTRO ----------
 function register() {
   const username = document.getElementById("regUsername").value.trim();
   const password = document.getElementById("regPassword").value.trim();
@@ -107,6 +110,7 @@ function register() {
   saveData(); alert("Usuário registrado com sucesso!"); showLogin();
 }
 
+// ---------- RECUPERAÇÃO DE SENHA ----------
 function askQuestion() {
   const username = document.getElementById("recUsername").value.trim();
   const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
@@ -130,8 +134,10 @@ function resetPassword(username) {
   user.password = newPass; saveData(); alert("Senha redefinida!"); showLogin();
 }
 
+// ---------- LOGOFF ----------
 function logoff() { loggedUser=null; localStorage.removeItem("loggedUser"); showLogin(); }
 
+// ---------- TELA PRINCIPAL ----------
 function showMain() {
   document.getElementById("loginSection").style.display = "none";
   document.getElementById("registerSection").style.display = "none";
@@ -156,13 +162,21 @@ function showLogin() {
 function showRegister() { document.getElementById("loginSection").style.display="none"; document.getElementById("registerSection").style.display="block"; }
 function showRecovery() { document.getElementById("loginSection").style.display="none"; document.getElementById("recoverySection").style.display="block"; document.getElementById("securityQuestion").style.display="none"; }
 
+// ---------- ABAS ----------
 function switchTab(tab) {
   document.querySelectorAll(".tab").forEach(btn=>btn.classList.remove("active"));
-  if(tab==="horarios"){ document.querySelector("#tabHorarios").style.display="block"; document.querySelector("#tabUsuarios").style.display="none"; document.querySelectorAll(".tab")[0].classList.add("active"); }
-  else { document.querySelector("#tabHorarios").style.display="none"; document.querySelector("#tabUsuarios").style.display="block"; document.querySelectorAll(".tab")[1].classList.add("active"); }
+  if(tab==="horarios"){ 
+    document.querySelector("#tabHorarios").style.display="block"; 
+    document.querySelector("#tabUsuarios").style.display="none"; 
+    document.querySelectorAll(".tab")[0].classList.add("active"); 
+  } else { 
+    document.querySelector("#tabHorarios").style.display="none"; 
+    document.querySelector("#tabUsuarios").style.display="block"; 
+    document.querySelectorAll(".tab")[1].classList.add("active"); 
+  }
 }
 
-// Usuários
+// ---------- USUÁRIOS ----------
 function renderUsersTable() {
   const userObj = users.find(u=>u.username===loggedUser);
   if(!userObj||!userObj.isAdmin) return;
@@ -177,4 +191,21 @@ function renderUsersTable() {
           ${u.username!=="adm"?`
             <button class="action-btn delete-btn" onclick="deleteUser('${u.username}')">Excluir</button>
             <button class="action-btn reset-btn" onclick="forceReset('${u.username}')">Redefinir Senha</button>
-            <button class="
+            <button class="action-btn promote-btn" onclick="toggleAdmin('${u.username}')">${u.isAdmin?"Rebaixar":"Promover"} ADM</button>
+            <button class="action-btn edit-btn" onclick="editUserName('${u.username}')">Ajustar</button>
+          `:`<span class="view-only">Protegido</span>`}
+        </td>
+      </tr>
+    `;
+  });
+}
+
+window.deleteUser=function(username){ if(!confirm("Excluir usuário "+username+"?")) return; users=users.filter(u=>u.username!==username); reservas=reservas.filter(r=>r.organizador!==username); saveData(); renderUsersTable(); renderTable(); }
+window.forceReset=function(username){ const newPass=prompt("Digite a nova senha para "+username+":"); if(!newPass) return; const user=users.find(u=>u.username===username); if(user){ user.password=newPass; saveData(); alert("Senha redefinida!"); } }
+window.toggleAdmin=function(username){ const user=users.find(u=>u.username===username); if(user){ user.isAdmin=!user.isAdmin; saveData(); renderUsersTable(); } }
+window.editUserName=function(username){ const newName=prompt("Digite o novo nome de usuário:",username); if(!newName) return; if(users.some(u=>u.username.toLowerCase()===newName.toLowerCase())){ alert("Esse nome já está em uso!"); return; } const user=users.find(u=>u.username===username); if(user){ reservas.forEach(r=>{ if(r.organizador===user.username) r.organizador=newName; }); user.username=newName; saveData(); renderUsersTable(); renderTable(); alert("Nome de usuário atualizado com sucesso!"); } }
+
+document.getElementById("logoffBtn").addEventListener("click", logoff);
+
+// ---------- INICIALIZAÇÃO ----------
+if(loggedUser && users.some(u=>u.username===loggedUser)) showMain(); else showLogin();
