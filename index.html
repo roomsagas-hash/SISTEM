@@ -1,5 +1,9 @@
-// Descomente só para resetar localStorage
-// localStorage.clear();
+// ---------- LIMPAR USUÁRIOS ANTIGOS E LOGGEDUSER ----------
+if (!localStorage.getItem("resetDone")) {
+  localStorage.removeItem("users");       // Remove usuários antigos
+  localStorage.removeItem("loggedUser");  // Remove login antigo
+  localStorage.setItem("resetDone", "true"); // Marca que já fez o reset
+}
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -113,5 +117,6 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
