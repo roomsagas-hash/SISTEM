@@ -169,3 +169,4 @@
   // ---------- INÍCIO ----------
   if (loggedUser && users.some(u => u.username === loggedUser)) showMain(); else showLogin();
 </script>
+
